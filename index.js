@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 /magic6cpp - Magic Square 6 c++
 /magic4cpp - Magic Square 4 c++
 /magic3cpp - Magic Square 3 c++
+/nqueenscpp - N'Queens c++
 `;
   res.type('text/plain');
   res.send(code);
@@ -644,6 +645,53 @@ int main() {
   res.send(code);
 });
 
+app.get('/nqueenscpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+void printBoard(const vector<int>& cols) {
+    int n = cols.size();
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c) {
+            cout << (cols[r] == c ? 'Q' : '.') << ' ';
+        }
+        cout << '\n';
+    }
+    cout << '\n';
+}
+
+void solveNQueens(int row, vector<int>& cols, vector<bool>& colUsed, vector<bool>& diag1Used, vector<bool>& diag2Used, long long &solutionCount, bool printAll) {
+    int n = cols.size();
+    if (row == n) {
+        solutionCount++;
+        if (printAll) printBoard(cols);
+        return;
+    }
+    for (int c = 0; c < n; ++c) {
+        if (colUsed[c] || diag1Used[row + c] || diag2Used[row - c + n - 1]) continue;
+        cols[row] = c;
+        colUsed[c] = diag1Used[row + c] = diag2Used[row - c + n - 1] = true;
+        solveNQueens(row + 1, cols, colUsed, diag1Used, diag2Used, solutionCount, printAll);
+        colUsed[c] = diag1Used[row + c] = diag2Used[row - c + n - 1] = false;
+    }
+}
+
+int main() {
+    int n;
+    cout << "Enter number of queens: ";
+    cin >> n;
+    vector<int> cols(n);
+    vector<bool> colUsed(n, false), diag1Used(2 * n - 1, false), diag2Used(2 * n - 1, false);
+    long long solutionCount = 0;
+    solveNQueens(0, cols, colUsed, diag1Used, diag2Used, solutionCount, true);
+    cout << "Total solutions: " << solutionCount << endl;
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
 
 app.get('/a', (req, res) => {
   const code = `
