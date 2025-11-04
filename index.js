@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 /funknapsackcpp - Functional Knapsack c++
 /dijkstracpp - Dijkstra C++
 /floydcpp - Floyd Warshall C++
+/kruskalcpp - Kruskal C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1004,6 +1005,58 @@ int main() {
   res.type('text/plain');
   res.send(code);
 });
+
+app.get('/kruskalcpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Edge {
+    int u, v, w;
+};
+
+int findParent(int node, vector<int>& parent) {
+    return (parent[node] == node) ? node : parent[node] = findParent(parent[node], parent);
+}
+
+int main() {
+    int vertices, edges;
+    cout << "Enter number of vertices and edges: ";
+    cin >> vertices >> edges;
+
+    vector<Edge> edgeList(edges);
+    cout << "Enter each edge (u v w):\n";
+    for (auto& edge : edgeList)
+        cin >> edge.u >> edge.v >> edge.w;
+
+    sort(edgeList.begin(), edgeList.end(), [](Edge a, Edge b) { return a.w < b.w; });
+
+    vector<int> parent(vertices + 1);
+    iota(parent.begin(), parent.end(), 0);
+
+    int totalCost = 0;
+    vector<Edge> mst;
+
+    for (auto [u, v, w] : edgeList) {
+        int pu = findParent(u, parent);
+        int pv = findParent(v, parent);
+        if (pu != pv) {
+            parent[pu] = pv;
+            totalCost += w;
+            mst.push_back({u, v, w});
+        }
+    }
+
+    cout << "\nMinimum Spanning Tree Cost = " << totalCost << "\n";
+    cout << "Edges in MST:\n";
+    for (auto [u, v, w] : mst)
+        cout << u << " - " << v << " (" << w << ")\n";
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.get('/a', (req, res) => {
   const code = `
