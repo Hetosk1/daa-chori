@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
 /binarycpp - Binary C++
 /linearcpp - Linear C++
 /magic6cpp - Magic Square 6 c++
+/magic4cpp - Magic Square 4 c++
 `;
   res.type('text/plain');
   res.send(code);
@@ -541,6 +542,51 @@ int main() {
             cout << square[i][j] << "\t";
         cout << endl;
     }
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+app.get('/magic4cpp', (req, res) => {
+  const code = `
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    if (n % 4 != 0) {
+        return 0;
+    }
+
+    int square[100][100];
+    int num = 1;
+    int total = n * n;
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            square[i][j] = num++;
+        }
+    }
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if ((i % 4 == j % 4) || ((i % 4 + j % 4) == 3)) {
+                square[i][j] = total + 1 - square[i][j];
+            }
+        }
+    }
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            cout << square[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
+    return 0;
 }
 `;
   res.type('text/plain');
