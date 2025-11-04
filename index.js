@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 /magic    - Magic Square
 /binarycpp - Binary C++
 /linearcpp - Linear C++
+/magic6cpp - Magic Square 6 c++
 `;
   res.type('text/plain');
   res.send(code);
@@ -490,6 +491,62 @@ int main() {
   res.type('text/plain');
   res.send(code);
 });
+
+app.get('/magic6cpp', (req, res) => {
+  const code = `
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n = 6;
+    int square[6][6];
+
+    int n2 = n / 2;
+    int subSquare[3][3];
+    int k = 1;
+
+    for(int i = 0; i < n2; i++)
+        for(int j = 0; j < n2; j++)
+            subSquare[i][j] = k++;
+
+    int offset = n2 * n2;
+
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++)
+            square[i][j] = subSquare[i % n2][j % n2];
+
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++) {
+            if (i < n2 && j < n2) square[i][j] += 0 * offset;
+            else if (i < n2 && j >= n2) square[i][j] += 2 * offset;
+            else if (i >= n2 && j < n2) square[i][j] += 3 * offset;
+            else square[i][j] += 1 * offset;
+        }
+
+    int m = (n - 2) / 4;
+
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < m; j++)
+            swap(square[i][j], square[i + n2][j]);
+
+    for(int i = 0; i < n; i++)
+        for(int j = n - m + 1; j < n; j++)
+            swap(square[i][j], square[i + n2][j]);
+
+    swap(square[m][0], square[m + n2][0]);
+    swap(square[m][m], square[m + n2][m]);
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++)
+            cout << square[i][j] << "\t";
+        cout << endl;
+    }
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.get('/a', (req, res) => {
   const code = `
