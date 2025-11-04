@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 /magic4cpp - Magic Square 4 c++
 /magic3cpp - Magic Square 3 c++
 /nqueenscpp - N'Queens c++
+/knapsack01cpp - 0/1 Knapsack C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -692,6 +693,70 @@ int main() {
   res.type('text/plain');
   res.send(code);
 });
+
+app.get('/knapsack01cpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int itemCount, maxWeight;
+
+    cout << "Enter number of items: ";
+    cin >> itemCount;
+
+    cout << "Enter maximum weight capacity: ";
+    cin >> maxWeight;
+
+    vector<string> itemNames(itemCount);
+    vector<int> itemWeights(itemCount);
+    vector<int> itemValues(itemCount);
+
+    cout << "\nEnter item details (Name Weight Value):\n";
+    for (int i = 0; i < itemCount; i++) {
+        cin >> itemNames[i] >> itemWeights[i] >> itemValues[i];
+    }
+
+    vector<vector<int>> dp(itemCount + 1, vector<int>(maxWeight + 1, 0));
+
+    // Building DP table
+    for (int i = 1; i <= itemCount; i++) {
+        for (int w = 1; w <= maxWeight; w++) {
+            if (itemWeights[i - 1] <= w)
+                dp[i][w] = max(itemValues[i - 1] + dp[i - 1][w - itemWeights[i - 1]], dp[i - 1][w]);
+            else
+                dp[i][w] = dp[i - 1][w];
+        }
+    }
+
+    cout << "\nMaximum value achievable: " << dp[itemCount][maxWeight] << "\n";
+
+    // Backtracking to find selected items
+    int remainingWeight = maxWeight;
+    cout << "\nItems included:\n";
+    for (int i = itemCount; i > 0; i--) {
+        if (dp[i][remainingWeight] != dp[i - 1][remainingWeight]) {
+            cout << "- " << itemNames[i - 1] << " (Weight: " << itemWeights[i - 1]
+                 << ", Value: " << itemValues[i - 1] << ")\n";
+            remainingWeight -= itemWeights[i - 1];
+        }
+    }
+
+    // Printing DP Table
+    cout << "\nDP Table:\n";
+    for (int i = 0; i <= itemCount; i++) {
+        for (int w = 0; w <= maxWeight; w++)
+            cout << setw(3) << dp[i][w] << " ";
+        cout << "\n";
+    }
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.get('/a', (req, res) => {
   const code = `
