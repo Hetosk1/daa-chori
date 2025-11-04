@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 /knapsack01cpp - 0/1 Knapsack C++
 /funknapsackcpp - Functional Knapsack c++
 /dijkstracpp - Dijkstra C++
+/floydcpp - Floyd Warshall C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -936,6 +937,73 @@ int main() {
   res.send(code);
 });
 
+app.get('/floydcpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int citycount;
+    const int INF = 100000000;
+    cout << "Enter the number of cities: ";
+    cin >> citycount;
+
+    vector<string> name(citycount);
+    for (int i = 0; i < citycount; i++) {
+        cout << "Enter the city name: ";
+        cin >> name[i];
+    }
+
+    cout << "\nEnter the distances (enter -1 if there is no edge):\n";
+    vector<vector<int>> distance(citycount, vector<int>(citycount));
+
+    for (int i = 0; i < citycount; i++) {
+        for (int j = 0; j < citycount; j++) {
+            int val;
+            cin >> val;
+            if (i == j) distance[i][j] = 0;
+            else if (val == -1) distance[i][j] = INF;
+            else distance[i][j] = val;
+        }
+    }
+
+    for (int k = 0; k < citycount; k++) {
+        for (int i = 0; i < citycount; i++) {
+            for (int j = 0; j < citycount; j++) {
+                if (distance[i][k] == INF || distance[k][j] == INF) continue;
+                if (distance[i][k] + distance[k][j] < distance[i][j]) {
+                    distance[i][j] = distance[i][k] + distance[k][j];
+                }
+            }
+        }
+    }
+
+    cout << "\nAll-Pairs Shortest Distance Matrix:\n";
+    for (int i = 0; i < citycount; i++) {
+        for (int j = 0; j < citycount; j++) {
+            if (distance[i][j] == INF) cout << "INF\t";
+            else cout << distance[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
+    int s, d;
+    cout << "\nEnter source city index (0 to " << citycount - 1 << "): ";
+    cin >> s;
+    cout << "Enter destination city index (0 to " << citycount - 1 << "): ";
+    cin >> d;
+
+    if (distance[s][d] == INF)
+        cout << "\nNo path exists between " << name[s] << " and " << name[d] << ".\n";
+    else
+        cout << "\nShortest distance from " << name[s] << " to " << name[d] << " = " << distance[s][d] << endl;
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
 
 app.get('/a', (req, res) => {
   const code = `
