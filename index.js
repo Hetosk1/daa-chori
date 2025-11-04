@@ -275,8 +275,135 @@ print("Total Cost:", cost)
   res.send(code);
 });
 
+// 🟢 Dijkstra's Algorithm
+app.get('/dijkstra', (req, res) => {
+  const code = `
+import heapq
+
+def dijkstra(graph, start):
+    distance = {node: float('inf') for node in graph}
+    distance[start] = 0
+    queue = [(0, start)]
+
+    while queue:
+        dist, node = heapq.heappop(queue)
+
+        for neighbor, weight in graph[node]:
+            if dist + weight < distance[neighbor]:
+                distance[neighbor] = dist + weight
+                heapq.heappush(queue, (distance[neighbor], neighbor))
+    return distance
+
+graph = {
+    'A': [('B', 1), ('C', 4)],
+    'B': [('A', 1), ('C', 2), ('D', 5)],
+    'C': [('A', 4), ('B', 2), ('D', 1)],
+    'D': [('B', 5), ('C', 1)]
+}
+
+print(dijkstra(graph, 'A'))
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+// 🟢 Knapsack Problem
+app.get('/knapsack', (req, res) => {
+  const code = `
+def knapsack(weights, values, capacity):
+    n = len(weights)
+    dp = [[0 for _ in range(capacity + 1)] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+            if weights[i - 1] <= w:
+                dp[i][w] = max(dp[i-1][w], values[i-1] + dp[i-1][w - weights[i-1]])
+            else:
+                dp[i][w] = dp[i-1][w]
+    return dp[n][capacity]
+
+weights = [1, 2, 3, 4]
+values = [10, 20, 30, 40]
+capacity = 5
+print(knapsack(weights, values, capacity))
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+// 🟢 Floyd Warshall Algorithm
+app.get('/floyd', (req, res) => {
+  const code = `
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [row[:] for row in graph]
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    return dist
+
+graph = [
+    [0, 3, float('inf'), 7],
+    [8, 0, 2, float('inf')],
+    [5, float('inf'), 0, 1],
+    [2, float('inf'), float('inf'), 0]
+]
+
+res = floyd_warshall(graph)
+for row in res:
+    print(row)
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+// 🟢 Optimal Merge Pattern
+app.get('/omp', (req, res) => {
+  const code = `
+import heapq
+
+def optimal_merge(files):
+    heapq.heapify(files)
+    cost = 0
+    while len(files) > 1:
+        first = heapq.heappop(files)
+        second = heapq.heappop(files)
+        merged = first + second
+        cost += merged
+        heapq.heappush(files, merged)
+    return cost
+
+files = [2, 3, 7, 10]
+print(optimal_merge(files))
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+// 🟢 Magic Square Generation (Odd Order)
+app.get('/magic', (req, res) => {
+  const code = `
+def generate_magic_square(n):
+    magic = [[0] * n for _ in range(n)]
+    i, j = 0, n // 2
+    for num in range(1, n * n + 1):
+        magic[i][j] = num
+        ni, nj = (i - 1) % n, (j + 1) % n
+        if magic[ni][nj]:
+            i = (i + 1) % n
+        else:
+            i, j = ni, nj
+    for row in magic:
+        print(row)
+
+generate_magic_square(3)
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.listen(46750, () => {
   console.log("chalu thai gyu");
 });
-
