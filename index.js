@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
 /floydcpp - Floyd Warshall C++
 /kruskalcpp - Kruskal C++
 /primscpp - Prims C++
+/quicktimecpp - Quick Sort based on time C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1124,6 +1125,94 @@ int main(){
   res.type('text/plain');
   res.send(code);
 });
+
+app.get('/quicktimecpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+
+int passCount = 0;
+
+// Generate random time in HH:MM:SS
+string gen_time() {
+    int h = rand() % 24;
+    int m = rand() % 60;
+    int s = rand() % 60;
+    char buf[9];
+    sprintf(buf, "%02d:%02d:%02d", h, m, s);
+    return string(buf);
+}
+
+// Compare times (HH:MM:SS)
+bool isEarlier(const string &t1, const string &t2) {
+    return t1 < t2; // works since format is zero-padded
+}
+
+// Partition
+int partition(vector<string> &arr, int low, int high) {
+    string pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (isEarlier(arr[j], pivot)) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+
+    swap(arr[i + 1], arr[high]);
+
+    // Print up to 5 passes
+    if (passCount < 5) {
+        passCount++;
+        cout << "Pass " << passCount << ": ";
+        for (auto &t : arr) cout << t << " ";
+        cout << "\n";
+    }
+
+    return i + 1;
+}
+
+// Recursive Quick Sort
+void quickSort(vector<string> &arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    srand(time(0));
+    int n = 10 + rand() % 11; // random 10–20 times
+    vector<string> times(n);
+
+    for (int i = 0; i < n; i++) times[i] = gen_time();
+
+    cout << "Randomly generated times:\n";
+    for (auto &t : times) cout << t << " ";
+    cout << "\n\n";
+
+    auto start = high_resolution_clock::now();
+    quickSort(times, 0, n - 1);
+    auto stop = high_resolution_clock::now();
+
+    cout << "\nSorted times:\n";
+    for (auto &t : times) cout << t << " ";
+    cout << "\n";
+
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "\nTime taken by Quick Sort: " << duration.count() << " microseconds\n";
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.get('/a', (req, res) => {
   const code = `
