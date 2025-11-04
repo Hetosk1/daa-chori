@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
 /kruskalcpp - Kruskal C++
 /primscpp - Prims C++
 /quicktimecpp - Quick Sort based on time C++
+/mergetimecpp - Merge Sort based on time C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1213,6 +1214,94 @@ int main() {
   res.send(code);
 });
 
+app.get('/mergetimecpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+
+int passCount = 0;
+
+// Function to generate random time as string
+string gen_time() {
+    int h = rand() % 24;
+    int m = rand() % 60;
+    int s = rand() % 60;
+
+    char buf[9];
+    sprintf(buf, "%02d:%02d:%02d", h, m, s);
+    return string(buf);
+}
+
+// Compare times as HH:MM:SS
+bool isEarlier(const string &t1, const string &t2) {
+    return t1 < t2; // lexicographical works for HH:MM:SS format
+}
+
+// Merge function
+void merge(vector<string> &arr, int low, int mid, int high) {
+    vector<string> temp;
+    int i = low, j = mid + 1;
+
+    while (i <= mid && j <= high) {
+        if (isEarlier(arr[i], arr[j])) temp.push_back(arr[i++]);
+        else temp.push_back(arr[j++]);
+    }
+
+    while (i <= mid) temp.push_back(arr[i++]);
+    while (j <= high) temp.push_back(arr[j++]);
+
+    for (int k = low; k <= high; k++)
+        arr[k] = temp[k - low];
+
+    // Print up to 5 passes
+    if (passCount < 5) {
+        passCount++;
+        cout << "Pass " << passCount << ": ";
+        for (auto &t : arr) cout << t << " ";
+        cout << "\n";
+    }
+}
+
+// Recursive Merge Sort
+void mergeSort(vector<string> &arr, int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
+        mergeSort(arr, low, mid);
+        mergeSort(arr, mid + 1, high);
+        merge(arr, low, mid, high);
+    }
+}
+
+int main() {
+    srand(time(0));
+    int n = 10 + rand() % 11; // random 10–20 times
+
+    vector<string> times(n);
+    for (int i = 0; i < n; i++) times[i] = gen_time();
+
+    cout << "Randomly generated times:\n";
+    for (auto &t : times) cout << t << " ";
+    cout << "\n\n";
+
+    auto start = high_resolution_clock::now();
+    mergeSort(times, 0, n - 1);
+    auto stop = high_resolution_clock::now();
+
+    cout << "\nSorted times:\n";
+    for (auto &t : times) cout << t << " ";
+    cout << "\n";
+
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "\nTime taken by Merge Sort: " << duration.count() << " microseconds\n";
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
 
 app.get('/a', (req, res) => {
   const code = `
