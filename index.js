@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 /primscpp - Prims C++
 /quicktimecpp - Quick Sort based on time C++
 /mergetimecpp - Merge Sort based on time C++
+/quicknamecpp - Quick Sort baed on names C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1295,6 +1296,82 @@ int main() {
 
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "\nTime taken by Merge Sort: " << duration.count() << " microseconds\n";
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+app.get('/quicknamecpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+int passCount = 0; // track passes (max 5)
+
+// Generate random 5-letter string
+string gen_name() {
+    string s;
+    for (int i = 0; i < 5; i++) {
+        s += char('A' + rand() % 26);
+    }
+    return s;
+}
+
+// Partition function
+int partition(vector<string> &arr, int low, int high) {
+    string pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+
+    swap(arr[i + 1], arr[high]);
+
+    // Show only 5 passes
+    if (passCount < 5) {
+        passCount++;
+        cout << "Pass " << passCount << ": ";
+        for (auto &x : arr) cout << x << " ";
+        cout << "\n";
+    }
+
+    return i + 1;
+}
+
+// Recursive Quick Sort
+void quickSort(vector<string> &arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    srand(time(0));
+    int n;
+    cout << "Enter number of names: ";
+    cin >> n;
+
+    vector<string> arr(n);
+    for (int i = 0; i < n; i++) arr[i] = gen_name();
+
+    cout << "\nBefore sorting:\n";
+    for (auto &x : arr) cout << x << " ";
+    cout << "\n\n";
+
+    quickSort(arr, 0, n - 1);
+
+    cout << "\nAfter sorting:\n";
+    for (auto &x : arr) cout << x << " ";
+    cout << "\n";
 
     return 0;
 }
