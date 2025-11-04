@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 /omp      - Optimal Merge Pattern
 /magic    - Magic Square
 /binarycpp - Binary C++
+/linearcpp - Linear C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -444,6 +445,54 @@ int main() {
     if(idx == -1) cout << "Not found";
     else cout << "Found at index " << idx;
 }
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+
+
+app.get('/linearcpp', (req, res) => {
+  const code = `
+  #include <bits/stdc++.h>
+using namespace std;
+
+string randomStr(int len) {
+    static const string chars = "abcdefghijklmnopqrstuvwxyz";
+    string s;
+    for(int i = 0; i < len; i++)
+        s += chars[rand() % chars.size()];
+    return s;
+}
+
+int linearRec(vector<string>& a, string key, int i) {
+    if(i == a.size()) return -1;
+    if(a[i] == key) return i;
+    return linearRec(a, key, i+1);
+}
+
+int main() {
+    srand(time(0));
+    int n;
+    cin >> n;
+    vector<string> a(n);
+    for(int i = 0; i < n; i++)
+        a[i] = randomStr(5);
+
+    string key;
+    cin >> key;
+
+    int idx = linearRec(a, key, 0);
+    if(idx == -1) cout << "Not found";
+    else cout << "Found at index " << idx;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+app.get('/a', (req, res) => {
+  const code = `
 `;
   res.type('text/plain');
   res.send(code);
