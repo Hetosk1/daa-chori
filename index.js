@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
 /floyd    - Floyd Warshall Algorithm
 /omp      - Optimal Merge Pattern
 /magic    - Magic Square
+/binarycpp - Binary C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -398,6 +399,51 @@ def generate_magic_square(n):
         print(row)
 
 generate_magic_square(3)
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+
+
+app.get('/binarycpp', (req, res) => {
+  const code = `
+  #include <bits/stdc++.h>
+using namespace std;
+
+string randomStr(int len) {
+    static const string chars = "abcdefghijklmnopqrstuvwxyz";
+    string s;
+    for(int i = 0; i < len; i++)
+        s += chars[rand() % chars.size()];
+    return s;
+}
+
+int binaryRec(vector<string>& a, string key, int l, int r) {
+    if(l > r) return -1;
+    int mid = (l+r)/2;
+    if(a[mid] == key) return mid;
+    if(a[mid] < key) return binaryRec(a, key, mid+1, r);
+    return binaryRec(a, key, l, mid-1);
+}
+
+int main() {
+    srand(time(0));
+    int n;
+    cin >> n;
+    vector<string> a(n);
+    for(int i = 0; i < n; i++)
+        a[i] = randomStr(5);
+
+    sort(a.begin(), a.end());
+
+    string key;
+    cin >> key;
+
+    int idx = binaryRec(a, key, 0, n-1);
+    if(idx == -1) cout << "Not found";
+    else cout << "Found at index " << idx;
+}
 `;
   res.type('text/plain');
   res.send(code);
