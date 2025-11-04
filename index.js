@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
 /linearcpp - Linear C++
 /magic6cpp - Magic Square 6 c++
 /magic4cpp - Magic Square 4 c++
+/magic3cpp - Magic Square 3 c++
 `;
   res.type('text/plain');
   res.send(code);
@@ -582,6 +583,56 @@ int main() {
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
             cout << square[i][j] << "\t";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+
+app.get('/magic3cpp', (req, res) => {
+  const code = `
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter odd number for magic square: ";
+    cin >> n;
+
+    if(n % 2 == 0){
+        cout << "Magic square using this method only works for odd n. Use an odd number." << endl;
+        return 0;
+    }
+
+    int square[50][50] = {0};
+
+    int num = 1;
+    int i = 0, j = n / 2;
+    while(num <= n * n) {
+        square[i][j] = num;
+
+        int new_i = (i - 1 + n) % n;
+        int new_j = (j + 1) % n;
+
+        if(square[new_i][new_j] != 0) {
+            i = (i + 1) % n;
+        } else {
+            i = new_i;
+            j = new_j;
+        }
+        num++;
+    }
+
+    cout << "\nMagic Square of size " << n << ":\n";
+    for(int r = 0; r < n; r++) {
+        for(int c = 0; c < n; c++) {
+            cout << square[r][c] << "\t";
         }
         cout << endl;
     }
