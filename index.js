@@ -1,8 +1,24 @@
 const express = require('express');
 const app = express();
 
+
 app.get('/', (req, res) => {
-  res.send("tari ben no piko");
+  const code = `
+/linear   - Linear Search
+/binary   - Binary Search
+/quick    - Quick Sort
+/merge    - Merge Sort
+/prims    - Prims Algorithm
+/kruskal  - Kruskals Algorithm
+/nqueens  - N'Queens Problem 
+/dijkstra - Dijkstra's Algorithm
+/knapsack - Knapsack Problem
+/floyd    - Floyd Warshall Algorithm
+/omp      - Optimal Merge Pattern
+/magic    - Magic Square
+`;
+  res.type('text/plain');
+  res.send(code);
 });
 
 // 🟢 Linear Search
