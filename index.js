@@ -30,7 +30,8 @@ app.get('/', (req, res) => {
 /primscpp - Prims C++
 /quicktimecpp - Quick Sort based on time C++
 /mergetimecpp - Merge Sort based on time C++
-/quicknamecpp - Quick Sort baed on names C++
+/quicknamecpp - Quick Sort based on names C++
+/mergenamecpp - Merge Sort based on names C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1368,6 +1369,82 @@ int main() {
     cout << "\n\n";
 
     quickSort(arr, 0, n - 1);
+
+    cout << "\nAfter sorting:\n";
+    for (auto &x : arr) cout << x << " ";
+    cout << "\n";
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+app.get('/mergenamecpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+int passCount = 0; // track passes shown (max 5)
+
+// Generate random 5-letter string
+string gen_name() {
+    string s;
+    for (int i = 0; i < 5; i++) {
+        s += char('A' + rand() % 26);
+    }
+    return s;
+}
+
+// Merge function
+void merge(vector<string> &arr, int low, int mid, int high) {
+    vector<string> temp;
+    int i = low, j = mid + 1;
+
+    while (i <= mid && j <= high) {
+        if (arr[i] < arr[j]) temp.push_back(arr[i++]);
+        else temp.push_back(arr[j++]);
+    }
+    while (i <= mid) temp.push_back(arr[i++]);
+    while (j <= high) temp.push_back(arr[j++]);
+
+    for (int k = low; k <= high; k++)
+        arr[k] = temp[k - low];
+
+    // Show only first 5 passes
+    if (passCount < 5) {
+        passCount++;
+        cout << "Pass " << passCount << ": ";
+        for (auto &x : arr) cout << x << " ";
+        cout << "\n";
+    }
+}
+
+// Recursive merge sort
+void mergeSort(vector<string> &arr, int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
+        mergeSort(arr, low, mid);
+        mergeSort(arr, mid + 1, high);
+        merge(arr, low, mid, high);
+    }
+}
+
+int main() {
+    srand(time(0));
+    int n;
+    cout << "Enter number of names: ";
+    cin >> n;
+
+    vector<string> arr(n);
+    for (int i = 0; i < n; i++) arr[i] = gen_name();
+
+    cout << "\nBefore sorting:\n";
+    for (auto &x : arr) cout << x << " ";
+    cout << "\n\n";
+
+    mergeSort(arr, 0, n - 1);
 
     cout << "\nAfter sorting:\n";
     for (auto &x : arr) cout << x << " ";
