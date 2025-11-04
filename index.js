@@ -196,6 +196,70 @@ print_grid([[" " for _ in range(4)] for _ in range(4)], 0)
   res.send(code);
 });
 
+
+app.get('/kruskal', (req, res) => {
+  const code = `
+# Kruskal's Algorithm - Simple & Memorable
+
+def find(parent, i):
+    if parent[i] != i:
+        parent[i] = find(parent, parent[i])  # Path compression
+    return parent[i]
+
+def union(parent, rank, x, y):
+    if rank[x] > rank[y]:
+        parent[y] = x
+    elif rank[x] < rank[y]:
+        parent[x] = y
+    else:
+        parent[y] = x
+        rank[x] += 1
+
+def kruskal(graph):
+    V = len(graph)  # Number of vertices
+    edges = []
+    
+    # Collect all edges: (weight, u, v)
+    for u in range(V):
+        for v, weight in graph[u]:
+            edges.append((weight, u, v))
+    
+    # Sort edges by weight
+    edges.sort()
+    
+    parent = [i for i in range(V)]
+    rank = [0] * V
+    mst = []
+    total_cost = 0
+    
+    for weight, u, v in edges:
+        pu = find(parent, u)
+        pv = find(parent, v)
+        
+        if pu != pv:  # No cycle
+            union(parent, rank, pu, pv)
+            mst.append((u, v, weight))
+            total_cost += weight
+    
+    return mst, total_cost
+
+# Example usage:
+graph = [
+    [(1, 2), (3, 4)],     # Node 0 connected to 1(w=2), 3(w=4)
+    [(0, 2), (2, 3)],     # Node 1
+    [(1, 3), (3, 5)],     # Node 2
+    [(0, 4), (2, 5)]      # Node 3
+]
+
+mst, cost = kruskal(graph)
+print("MST Edges:", mst)
+print("Total Cost:", cost)
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
+
 app.listen(46750, () => {
   console.log("chalu thai gyu");
 });
