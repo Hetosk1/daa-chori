@@ -196,7 +196,7 @@ print_grid([[" " for _ in range(4)] for _ in range(4)], 0)
   res.send(code);
 });
 
-app.listen(5000, () => {
+app.listen(46750, () => {
   console.log("chalu thai gyu");
 });
 
