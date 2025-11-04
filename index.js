@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 /magic3cpp - Magic Square 3 c++
 /nqueenscpp - N'Queens c++
 /knapsack01cpp - 0/1 Knapsack C++
+/funknapsackcpp - Functional Knapsack c++
 `;
   res.type('text/plain');
   res.send(code);
@@ -757,6 +758,92 @@ int main() {
   res.send(code);
 });
 
+app.get('/funknapsackcpp', (req, res) => {
+  const code = `
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Item {
+    int weight;
+    int value;
+    double ratio; // value per weight
+};
+
+int main() {
+    int n, capacity;
+    cout << "Enter number of items and bag capacity: ";
+    cin >> n >> capacity;
+
+    vector<Item> items(n);
+    cout << "Enter weight and value of each item:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> items[i].weight >> items[i].value;
+        items[i].ratio = (double)items[i].value / items[i].weight;
+    }
+
+    // Display initial table
+    cout << "\nInitial Items:\n";
+    cout << "Item\tWeight\tValue\tRatio\n";
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << "\t" << items[i].weight << "\t"
+             << items[i].value << "\t" << fixed << setprecision(2)
+             << items[i].ratio << endl;
+    }
+
+    // Sort items by ratio (descending)
+    sort(items.begin(), items.end(), [](Item a, Item b) {
+        return a.ratio > b.ratio;
+    });
+
+    cout << "\nAfter Sorting (by value/weight ratio):\n";
+    cout << "Item\tWeight\tValue\tRatio\n";
+    for (int i = 0; i < n; i++) {
+        cout << i + 1 << "\t" << items[i].weight << "\t"
+             << items[i].value << "\t" << fixed << setprecision(2)
+             << items[i].ratio << endl;
+    }
+
+    double totalValue = 0.0;
+    int remaining = capacity;
+    vector<pair<int, double>> taken; // item index, fraction taken
+
+    cout << "\nSelection Process:\n";
+    cout << "Step\tItem\tTaken(%)\tRemaining Cap\tValue Added\tTotal Value\n";
+
+    for (int i = 0; i < n && remaining > 0; i++) {
+        double takenFraction = 0.0;
+        double addedValue = 0.0;
+
+        if (items[i].weight <= remaining) {
+            remaining -= items[i].weight;
+            totalValue += items[i].value;
+            takenFraction = 1.0;
+            addedValue = items[i].value;
+        } else {
+            takenFraction = (double)remaining / items[i].weight;
+            addedValue = items[i].value * takenFraction;
+            totalValue += addedValue;
+            remaining = 0;
+        }
+
+        taken.push_back({i + 1, takenFraction});
+        cout << i + 1 << "\t" << i + 1 << "\t" << fixed << setprecision(2)
+             << takenFraction * 100 << "%\t\t" << remaining << "\t\t"
+             << addedValue << "\t\t" << totalValue << endl;
+    }
+
+    cout << "\nMaximum Total Value: " << fixed << setprecision(2) << totalValue << endl;
+    cout << "Items Taken:\n";
+    for (auto &x : taken) {
+        cout << "Item " << x.first << " -> " << x.second * 100 << "% taken\n";
+    }
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
 
 app.get('/a', (req, res) => {
   const code = `
