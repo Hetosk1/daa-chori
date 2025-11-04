@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
 /dijkstracpp - Dijkstra C++
 /floydcpp - Floyd Warshall C++
 /kruskalcpp - Kruskal C++
+/primscpp - Prims C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -1057,6 +1058,72 @@ int main() {
   res.send(code);
 });
 
+app.get('/primscpp', (req, res) => {
+  const code = `
+#include<bits/stdc++.h>
+using namespace std;
+void prims(vector<vector<int>>&graph){
+    int num=graph.size();
+    vector<int> parent(num,-1);
+    vector<int> mincost(num,10000);
+    vector<bool> inmst(num,false);
+     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    
+    int start=0;
+    pq.push({0,start});
+    mincost[start]=0;
+    int total=0;
+
+    while(!pq.empty()){
+        int u =pq.top().second;
+        int weight=pq.top().first;
+        pq.pop();
+        if(inmst[u]){
+            continue;
+        }
+        inmst[u]=true;
+        total+=weight;
+       
+        for(int v=0;v<num;v++){
+            int edgwt=graph[u][v];
+            if(edgwt&&!inmst[v]&&edgwt<mincost[v]){
+                mincost[v]=edgwt;
+                parent[v]=u;
+                pq.push({edgwt,v});
+            }
+        }
+        
+        
+    }
+    
+    for(int i =1;i<num;i++){
+        cout<<"department: "<<parent[i]+1<<" department "<<i+1<<" cost "<<graph[i][parent[i]]<<endl;
+    }
+    
+    cout<<"cost: "<<total<<endl;
+}
+
+
+int main(){
+    int n;
+    cout<<"enter the numver of nodes: ";
+    cin>>n;
+    cout<<"entr the cost: "<<endl;
+    vector<vector<int>> graph(n,vector<int>(n));
+    
+    for(int i =0;i<n;i++){
+       for(int j=0;j<n;j++)    {
+           cin>>graph[i][j];
+           
+       }
+    }
+    prims(graph);
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
 
 app.get('/a', (req, res) => {
   const code = `
