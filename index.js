@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 /nqueenscpp - N'Queens c++
 /knapsack01cpp - 0/1 Knapsack C++
 /funknapsackcpp - Functional Knapsack c++
+/dijkstracpp - Dijkstra C++
 `;
   res.type('text/plain');
   res.send(code);
@@ -844,6 +845,97 @@ int main() {
   res.type('text/plain');
   res.send(code);
 });
+
+app.get('/dijkstracpp', (req, res) => {
+  const code = `
+#include <iostream>
+#include <vector>
+#include <climits>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter the number of hubs: ";
+    cin >> n;
+
+    int timee[100][100];
+
+    // ---- Input adjacency matrix ----
+    cout << "Enter the adjacency matrix (0 if no direct path):" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            int value;
+            cin >> value;
+            if (i == j)
+                timee[i][j] = 0;          // distance to itself is 0
+            else if (value == 0)
+                timee[i][j] = INT_MAX;    // 0 means no direct path
+            else
+                timee[i][j] = value;      // valid road distance
+        }
+    }
+
+    int s, des;
+    cout << "Enter the source: ";
+    cin >> s;
+    cout << "Enter the destination: ";
+    cin >> des;
+
+    vector<int> dis(n, INT_MAX); // stores shortest distance
+    vector<int> prev(n, -1);     // stores previous node for path reconstruction
+    vector<int> vis(n, 0);       // visited array
+
+    dis[s] = 0;
+
+    // ---- Dijkstra’s Algorithm ----
+    for (int i = 0; i < n - 1; i++) {
+        int u = -1;
+
+        // Find unvisited node with smallest distance
+        for (int j = 0; j < n; j++) {
+            if (!vis[j] && (u == -1 || dis[j] < dis[u]))
+                u = j;
+        }
+
+        vis[u] = 1; // mark as visited
+
+        // Update distances for neighbors
+        for (int v = 0; v < n; v++) {
+            if (timee[u][v] != INT_MAX && dis[u] + timee[u][v] < dis[v]) {
+                dis[v] = dis[u] + timee[u][v];
+                prev[v] = u;
+            }
+        }
+    }
+
+    // ---- Output shortest path ----
+    if (dis[des] == INT_MAX) {
+        cout << "No path found!" << endl;
+    } else {
+        cout << "Shortest distance: " << dis[des] << endl;
+        cout << "Path: ";
+
+        vector<int> path;
+        for (int v = des; v != -1; v = prev[v])
+            path.push_back(v);
+
+        reverse(path.begin(), path.end());
+
+        for (int i = 0; i < path.size(); i++) {
+            cout << path[i];
+            if (i != path.size() - 1) cout << " -> ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+`;
+  res.type('text/plain');
+  res.send(code);
+});
+
 
 app.get('/a', (req, res) => {
   const code = `
